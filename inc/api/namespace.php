@@ -202,7 +202,7 @@ function get_channel( $id ) {
 	}
 
 	$data = request(
-		'channels.info',
+		'conversations.info',
 		[
 			'channel' => $id,
 		]
