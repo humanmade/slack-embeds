@@ -15,13 +15,18 @@ const CACHE_LIFETIME = 3600;
  * @return stdClass|WP_Error Object on success, error otherwise
  */
 function request( $method, $params ) {
-	$params['token'] = SlackEmbeds\get_token();
-
 	$url = add_query_arg(
 		urlencode_deep( $params ),
 		sprintf( 'https://slack.com/api/%s', $method )
 	);
-	$response = wp_remote_get( $url );
+	$response = wp_remote_get(
+		$url,
+		[
+			'headers' => [
+				'Authorization' => 'Bearer ' . SlackEmbeds\get_token(),
+			],
+		]
+	);
 	if ( is_wp_error( $response ) ) {
 		return $response;
 	}
@@ -106,7 +111,7 @@ function get_message( $channel, $timestamp, $threaded_timestamp = null ) {
 	$method = 'conversations.history';
 	$args = [
 		'channel' => $channel,
-		'count' => 1,
+		'limit' => 1,
 		'latest' => $ts,
 		'inclusive' => true,
 	];
